@@ -1,0 +1,26 @@
+Indice: pour bien répondre à ces deux questions, essayez de voir si votre réponse fonctionne dans votre application. (Pour chacune, ce ne sont que quelques lignes à modifier dans le nuanceur!)
+
+
+Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran. Leur taille est donnée par la variable gl_PointSize.
+    i) Comment faire pour que la taille d'un point varie de façon inverse à sa distance du plan avant du volume de visualisation, c'est-à-dire qu'il soit plus gros lorsqu'il est plus près de la caméra ?
+        On peut remplacer l'utilisation de gl_PointSize par l'inverse de gl_Position.x
+    ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+        Donc remplacer dans le nuanceur de geometrie ceci :
+            float fact = gl_in[0].gl_PointSize / 50;
+        par cela :
+            float fact = 1.0 / gl_in[0].gl_Position.x;
+
+
+Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une matrice de rotation sur les quatre sommets.
+    i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets?
+        Non. Les dimensions de la texture utilisé, soit un carré, ne devrait pas changer
+        pour ne pas que l'étincelle semble changer de dimension. Cela ferait en sorte que
+        le carré utilisé dans l'image devrait déborder à l'extérieur de l'image à tout moment
+        où l'angle ne serait pas un multiple de 90.
+
+    ii) Quel problème observerions-nous alors et comment devrait-il être corrigé?
+        L'image semble se répéter lorsque la sélection déborde de celle-ci. On suppose qu'il
+        existe un mode d'échantionnage qui retourne une couleur transparente lorsque la 
+        sélection déborde.
+
+    Afin de facilement répondre à cette question, vous pouvez remplacer (temporairement!) l'image de l'étincelle de ce TP par l'image de l'échiquier du TP3.  Si vous appliquez ensuite la matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets, vous pourrez alors très bien voir ce qui se passe.

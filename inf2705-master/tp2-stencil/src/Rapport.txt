@@ -1,0 +1,28 @@
+Q1: Dans le nuanceur de sommets, si on souhaite calculer la profondeur du
+    sommet dans le repère de la caméra, on peut utiliser cette formule :
+
+    « out float profondeur = -( matrVisu * matrModel * Vertex ).z; »
+
+    Pourquoi doit-on inverser le signe du résultat calculé ?
+
+    L'axe des Z pointe vers la camera, faisait en sorte que la position 
+    d'un objet éloigné aurait une valeur négative en Z.
+
+
+Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
+    profondeur dans le nuanceur de fragments, que se passe-t-il si on
+    remplace
+
+    « d = gl_FragCoord.z / gl_FragCoord.w; »
+
+    par seulement l'utilisation de z ou de w avec
+
+    « d = gl_FragCoord.z; » ou
+    « d = gl_FragCoord.w; » ?
+
+    Comment expliquez-vous les comportements observés dans un cas ou l'autre ?
+    Quel est l'intérêt de ce comportement ?
+
+    Il ne se passe rien. gl_FragCoord.z est une valeur normalisee sur clip.w et 
+    gl_FragCoord.w est l'inverse de clip.w. En divisant les deux, nous obtenons
+    la vrai valeur de la distance en Z. 

@@ -1,0 +1,49 @@
+Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
+    de coordonnées « main gauche » (au lieu du l'habituel « main droite »).
+    Comment devrait-on alors modifier la matrice 4x4 servant à la rotation
+    afin de préserver le même effet visuel d'une rotation positive ?  Quelle
+    serait la nouvelle matrice pour une rotation autour de l'axe des Z ?
+
+    Puisque la "regle de la main gauche" est identique a celle de la main 
+    droite, a l'exception de l'axe des Y, une rotation impliquant cet axe
+    devrait etre faite dans le sens inverse. 
+    
+    Dans la matrice de rotation, puisque seul Y est affecte, l'angle utilise
+    devrait etre l'inverse. Puisque sin(-θ) = -sinθ et que cos(-θ) = cosθ,
+    la matrice de rotation modifiee devrait devenir :
+
+    cosθ    -sinθ   0       0       =>      cosθ    sinθ    0       0
+    sinθ    cosθ    0       0               sinθ    cosθ    0       0
+    0       0       1       0               0       0       1       0
+    0       0       0       1               0       0       0       1
+
+
+Q2: Dans ce TP, on peut déplacer le bonhomme avec les flèches du clavier ou
+    encore lancer un déplacement « automatique » avec la touche 'espace'.
+    le bonhomme se déplace alors dans différentes directions, entre en
+    collision avec les parois du cube qui la contient et son mouvement (son
+    déplacement) change alors de direction.
+
+    Lorsque le bonhomme se déplace ainsi, comment peut-on toujours montrer
+    le bonhomme se déplaçant en regardant vers l'avant, c'est-à-dire dans le
+    sens de son mouvement. Comment faire en sorte que la tête (et le corps)
+    soit toujours dirigée dans le sens de son mouvement ?
+    Décrivez (avec assez de détails) comment vous implanteriez ceci dans ce TP.
+
+    Dans la methode calculerPhysique de la classe Bonhomme sont calcule tous les
+    deplacements faits sur le bonhommme. Présentement, l'attribut angleCorps
+    croit linéairement en fonction du temps. Cela fait en sorte que le bonhomme
+    tourne sur lui meme constamment sur le plan XY. Cet attribut devrait prendre
+    en consideration le sens de chaque mouvement en X et en Y, ainsi que la
+    vitesse sur chacun de ces axes. Pour calculer cet angle, nous aurions
+    simplement a calculer l'angle du triangle forme par les vecteurs
+    vitesse.x * sens[0] et vitesse.y * sens[1] a l'aide de la formule suivante :
+    atan((vitesse.y * sens[1]) / (vitesse.x * sens[0])) * 180 * 3.14159265
+    
+    Avec cette modification, le bonhomme regarderait dans le bon sens seulement sur
+    le plan XY. Il faudrait ajouter une autre transformation faites apres la rotation
+    sur ce plan pour faire une rotation sur XZ ou YZ. L'angle de cette rotation
+    dependerait, si on se decide sur XZ, du vecteur unitaire sens[0] et du vecteur 
+    vitesse.z * sens[2]. Cet angle serait calcule a l'aide de la formule suivante :
+    atan((vitesse.z * sens[2]) / sens[0]) * 180 * 3.14159265
+    

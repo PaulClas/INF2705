@@ -1,0 +1,20 @@
+Q1: On pourrait vouloir que la texture de l'échiquier se « déplace » sur
+    l'objet en fonction du temps, comme si elle glissait sur la surface dans
+    une direction donnée. Comment implanteriez-vous cette fonctionnalité?
+
+    Le nuanceur de fragments pourrait prendre en entrée une variable qui réprésente
+    le temps ou se servir d'une fonction disponible dans GLSL. Lorsque la texture est
+    chargée à l'aide de la fonction texture, la position en XY passé à la fonction pourrait
+    être décalée en fonction du temps. 
+
+Q2: Vous avez probablement remarqué que même en demandant un très grand
+    niveau de tessellation, le générateur de tessellation ne produira pas
+    une tessellation plus fine que le niveau maximum donné par la constante
+    GL_MAX_TESS_GEN_LEVEL.  (On peut obtenir la valeur de cette constante
+    avec glGet() et elle doit être au moins 64.)
+    Que doit-on alors faire si on veut, malgré tout, une tessellation deux
+    fois plus fine dans chaque direction?
+
+    On peut subdiviser les faces de notre objet en 2 pour faire en sorte que le nuanceur
+    de tesselation prenne en entrée deux fois plus de faces. Ainsi on aura un resultat equivalent
+    a une tessellation deux fois plus fine.
