@@ -1,0 +1,68 @@
+Q1: Lorsque l'on construit notre robot dans la partie 1 du TP, on effectue plusieurs transformations OpenGL sur chaque partie du bonhomme.
+    Ici on voudrait déplacer un objet quelconque sur un point arbitraire, faire un changement d'échelle puis une rotation et un enfin
+    un dernier déplacement. Écrivez la série de commandes OpenGL pour arriver à ces résultats en affichant l'objet (pas besoin d'arguments dans les fonctions) et
+    surtout l'ordre des commandes que vous auriez donné dans le code pour arriver à ce résultat en justifiant pourquoi (vous pouvez détailler
+    le calcul mathématique matriciel pour vous aider à justifier).
+
+Reponse:
+
+    matrModel.PushMatrix();{
+        matrModel.Translate(l,m,n);
+
+        1 0 0 l 
+        0 1 0 m 
+        0 0 1 n 
+        0 0 0 1
+
+        matrModel.Scale(a,b,c);
+
+        a 0 0 l 
+        0 b 0 m 
+        0 0 c n 
+        0 0 0 1
+
+        matrModel.Rotate(angle,x,y,z);
+
+        ax^2(1-cos(angle)+cos(angle) xy(1-cos(angle))-zsin(angle)  xz(1-cos(angle))+ysin(angle)  l 
+        yx(1-cos(angle))+zsin(angle) by^2(1-cos(angle))+cos(angle) yz(1-cos(angle))-xsin(angle)  m 
+        xz(1-cos(angle))-ysin(angle) yz(1-cos(angle))+xsin(angle)  cz^2(1-cos(angle))+cos(angle) n 
+        0                            0                             0                             1
+        
+        matrModel.Translate(e,f,g);
+
+        ax^2(1-cos(angle)+cos(angle) xy(1-cos(angle))-zsin(angle)  xz(1-cos(angle))+ysin(angle)  le 
+        yx(1-cos(angle))+zsin(angle) by^2(1-cos(angle))+cos(angle) yz(1-cos(angle))-xsin(angle)  mf 
+        xz(1-cos(angle))-ysin(angle) yz(1-cos(angle))+xsin(angle)  cz^2(1-cos(angle))+cos(angle) ng 
+        0                            0                             0                             1
+
+
+
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        afficherObjetQuelconque();
+        }
+    matrModel.PopMatrix(); 
+    glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+
+
+
+
+
+
+
+Q2: Dans ce TP dans la partie 2, on vous a demandé d'utiliser des VBOs pour afficher la fameuse théière !
+    Visuellement rien ne change, mais quelles sont les différences entre les deux méthodes utilisées ?
+    Pourquoi d'ailleurs ne remarque-t-on aucune différence ?
+
+    Un «tampon» ou un «objet tampon» est un bloc de mémoire qui peut résider dans la mémoire vidéo, ce qui 
+    signifie que l'on ne peut pas simplement y saisir un pointeur, y écrire et s'attendre à ce que les 
+    modifications affectent automatiquement les opérations suivantes. 
+
+    Un objet tampon de vertex (VBO) est un tampon qui est utilisé pour contenir un tableau d'attributs de vertex (alias vertex array). 
+    Si un tampon est lié au point de liaison GL_ARRAY_BUFFER lorsque glVertexAttribPointer (ou glVertexPointer, glTexCoordPointer, etc. 
+    dans le profil de compatibilité) est appelé, l'argument «pointeur» est interprété comme un décalage dans le tampon plutôt que comme 
+    un pointeur vers la mémoire client. Les appels de tirage suivants (glDrawArrays, glDrawElements, etc.) liront les données d'attribut 
+    de données dans le tampon plutôt que dans la mémoire du client. Le tampon utilisé est celui lié au moment de l'appel 
+    glVertexAttribPointer (etc), pas l'appel draw.
+
+
+
