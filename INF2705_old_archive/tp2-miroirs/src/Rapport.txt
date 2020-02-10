@@ -1,0 +1,37 @@
+Q1: Dans l'exemple du cours qui affiche un miroir avec une scène composée
+    d'un cube et de deux cylindres, on doit utiliser un plan de coupe afin
+    de ne pas afficher en avant du miroir le cylindre qui est placé en
+    arrière du miroir. Pourquoi un tel plan de coupe n'est-il pas nécessaire
+    ici alors que les parois de l'aquarium sont toutes des miroirs ?
+	
+	Dans la scène du cours, le cylindre est "dans" le miroir selon le point de
+	vue de l'utilisateur et le contenu réfléchi est réellement généré "dans"
+	le miroir, puis coupé par le stencil pour que le contenu réfléchi soit seulement
+	affiché dans le miroir. Le cylindre devrait donc théoriquement être présenté
+	dans le miroir selon le concept du stencil. Il faut ajouter un clipplane pour
+	différencier ce qui est "réfléchi" de ce qui est "derrière" le miroir.
+
+	Dans notre cas, il n'y a rien à afficher réellement en arrière des miroirs.
+
+
+Q2: Dans le cadre de ce TP, les réflexions sur les parois sont uniques,
+    c'est-à-dire qu'on n'y voit qu'une seule réflexion : celle du contenu de
+    l'aquarium.  Toutefois, en présence de deux miroirs face à face, on
+    devrait s'attendre à des réflexions multiples, comme illustré dans la
+    figure 10 de l'énoncé. Expliquez succinctement ce qui devrait être fait
+    dans ce TP pour afficher un niveau supplémentaire de réflexion dans
+    chaque miroir, c'est-à-dire afficher la réflexion simple (un seul
+    niveau) d'une paroi dans l'autre qui lui fait face.
+    (On souhaite continuer à utiliser le tampon de stencil, sans s'embarquer
+    à faire du tracé de rayons.)
+    Au total, combien de fois devrait-on alors tracer la scène ?
+
+	En fait, nous n'avons même pas à modifier le test de stencil, il faudra
+	simplement doubler les bancs de poissons sur chaque axe (x et y) à distance
+	égale derrière les bancs qui y sont déjà et faire le scale inverse de celui-ci.
+
+	En effet, le fait d'afficher les poissons une seconde fois les feront apparaître
+	déjà dans le stencil, mais il faut effectuer une symétrie pour que ce soit
+	cohérent avec le miroir.
+
+	Il faudrait donc tracer la scène 4 fois de plus, 2 par paire de miroirs.

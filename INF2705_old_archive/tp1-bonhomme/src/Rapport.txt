@@ -1,0 +1,54 @@
+Samuel Charbonneau (1897953)
+Jean-Olivier Dalphond (1873653)
+Réponses aux questions du TP1
+
+Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
+    de coordonnées « main gauche » (au lieu du l'habituel « main droite »).
+    Comment devrait-on alors modifier la matrice 4x4 servant à la rotation
+    afin de préserver le même effet visuel d'une rotation positive ?  Quelle
+    serait la nouvelle matrice pour une rotation autour de l'axe des Z ?
+
+Il faudrait ajouter un facteur de -1 à l'angle de rotation.
+
+(NB: sin (-x) = -sin (x) et cos (-x) = cos (x))
+
+Voici la matrice originale:
+
+cos x   -sin x   0
+sin x   cos x    0
+0       0        1
+
+Voici la matrice équivalente après le changement d'axe:
+
+cos x   sin x    0
+-sin x  cos x    0
+0       0        1		
+
+Il s'agit en fait de la matrice transposée.
+
+Q2: Dans ce TP, on peut déplacer le bonhomme avec les flèches du clavier ou
+    encore lancer un déplacement « automatique » avec la touche 'espace'.
+    le bonhomme se déplace alors dans différentes directions, entre en
+    collision avec les parois du cube qui la contient et son mouvement (son
+    déplacement) change alors de direction.
+
+    Lorsque le bonhomme se déplace ainsi, comment peut-on toujours montrer
+    le bonhomme se déplaçant en regardant vers l'avant, c'est-à-dire dans le
+    sens de son mouvement. Comment faire en sorte que la tête (et le corps)
+    soit toujours dirigée dans le sens de son mouvement ?
+    Décrivez (avec assez de détails) comment vous implanteriez ceci dans ce TP.
+
+Dans la fonction calculerPhysique(), voici le code de la section "rotation du corps"
+en bas:
+
+	// rotation du corps
+	// if (angleCorps > 360.0) angleCorps -= 360.0;
+	// angleCorps += 0.35;
+	angleCorps = atan((vitesse.y * sens[1])/(vitesse.x * sens[0])) *180 / 3.141592;
+	angleCorps += sens[0] < 0 ? 180.0 : NULL;
+
+Au fond, il faut faire correspondre l'angle à la direction du vecteur vitesse. Par
+la tangente, nous pouvons déduire l'angle de ce vecteur en divisant y/x. De plus,
+il faut ajuster l'angle lorsqu'il y a des valeurs négatives de x, car la fonction
+arctan nous donnera toujours un angle entre -90 et 90. Nous voulons l'angle absolu,
+donc entre 0 et 360. Dans les quadrants 2 et 3, il faut ajuster en additionnant 180.

@@ -1,0 +1,46 @@
+Q1: On pourrait vouloir que la texture de l'échiquier se « déplace » sur
+    l'objet en fonction du temps, comme si elle glissait sur la surface dans
+    une direction donnée. Comment implanteriez-vous cette fonctionnalité?
+
+    Dans le main, on fait une variable uniform float "decalage", et celle-ci est
+    remise à 0 lorsqu'elle atteint 1 (de façon à créer un loop). Ensuite, dans le
+    nuanceur de sommets, on modifie la coordonnée de la texture appliquée en
+    additionnant le décalage passé dans les attributs uniformes (ajoutée dans la
+    structure).
+
+        // Décalage pour le déplacement d'une texture
+		varsUnif.decalage+=0.01;
+		if(varsUnif.decalage>=1)
+			varsUnif.decalage=0;
+
+    (Nous avons laissé cette portion dans la fonction main dans main.cpp)
+
+    Dans le nuanceur de sommets, on peut réévaluer les "texcoord" avec une
+    fonction qui les incrémente ou décrémente, à chaque dt, une certaine proportion
+    de la taille totale de la texture. Cette proportion doit être dans l'axe selon
+    lequel l'animation est voulue.
+
+        //Si on veut décaler la texture 2 par rapport au temps, décommenter la structure if/else
+        /*if (numTexCoul == 2) {
+    		AttribsOut.texCoord = TexCoord.st + vec2(-decalage,0.0);
+	    } else {*/
+		    AttribsOut.texCoord = TexCoord.st;
+	    //}
+
+Q2: Vous avez probablement remarqué que même en demandant un très grand
+    niveau de tessellation, le générateur de tessellation ne produira pas
+    une tessellation plus fine que le niveau maximum donné par la constante
+    GL_MAX_TESS_GEN_LEVEL.  (On peut obtenir la valeur de cette constante
+    avec glGet() et elle doit être au moins 64.)
+    Que doit-on alors faire si on veut, malgré tout, une tessellation deux
+    fois plus fine dans chaque direction?
+
+    La façon la plus simple serait de préciser le modèle (ajouter des sommets) pour
+    avoir plus de polygones en entrée des nuanceurs de tesselation. Par exemple,
+    dans le cas du cube, on peut décomposer chaque face en 4 plus petits carrés égaux.
+
+    Note: J'ai trouvé en ligne qu'on pourrait possiblement utiliser un nuanceur de
+    géométrie, qui permet plus de polygones en sortie, mais moins de contrôle sur
+    ceux-ci. Je pense entre autres aux surfaces de Béziers, qui génèrent une grande
+    quantité de points, qui peuvent ensuite être utilisés pour faire des polygones.
+    Cependant, j'ignore si cela pourrait s'appliquer à notre situation précise.

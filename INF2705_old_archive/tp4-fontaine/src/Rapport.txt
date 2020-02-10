@@ -1,0 +1,35 @@
+Indice: pour bien répondre à ces deux questions, essayez de voir si votre réponse fonctionne dans votre application.
+(Pour chacune, ce ne sont que quelques lignes à modifier dans le nuanceur!)
+
+
+Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran. Leur taille est donnée par la variable gl_PointSize.
+    i) Comment faire pour que la taille d'un point varie de façon inverse à sa distance du plan avant du volume de visualisation,
+	   c'est-à-dire qu'il soit plus gros lorsqu'il est plus près de la caméra ?
+	   
+	Il faut d'abord calculer la profondeur que l'on veut utiliser pour déterminer la grosseur des points, puis assigner un
+	gl_PointSize proportionnel à cette profondeur calculée. Ici, il est plus facile de normaliser la profondeur entre 0 et 1.
+	Il faut aussi évidemment émettre des points plutôt que des triangle_strips dans le layout du nuanceur de géométrie.
+	   
+    ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+    
+	float profondeur = ((matrProj * matrVisu * matrModel * Vertex).z + 1.0) / 2.0;
+	gl_PointSize = pointsize * (1 - profondeur);
+
+
+Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une matrice de rotation sur les quatre sommets.
+    i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice de rotation sur les coordonnées de texture plutôt que sur les
+	   coordonnées des sommets?
+	   
+	Oui, c'est d'ailleurs ce que nous avons fait au départ sans tester avec l'échiquier.
+	   
+    ii) Quel problème observerions-nous alors et comment devrait-il être corrigé?
+    
+	Le problème est que la texture est carrée, et qu'en faisant la rotation sur la texture, la forme du "sprite" formé par les 4 sommets
+	émis reste carrée et ne tourne pas, donc la texture ne suit pas les coins de la forme carrée lorsqu'elle tourne. On contourne déjà
+	ce problème en ignorant les texels dont le alpha est inférieur à 0.1, mais cela n'est valide que pour l'étincelle. La solution est
+	de demander à Monsieur OpenGL de ne pas "étendre" la texture aux extrémités du cadre en triangle_strips qui ne tourne pas, avec
+	glTexParameterf pour changer GL_TEXTURE_WRAP_S et GL_TEXTURE_WRAP_T à: GL_CLAMP_TO_EDGE.
+		
+    Afin de facilement répondre à cette question, vous pouvez remplacer (temporairement!) l'image de l'étincelle de ce TP par l'image de
+    l'échiquier du TP3. Si vous appliquez ensuite la matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des
+    sommets, vous pourrez alors très bien voir ce qui se passe.
