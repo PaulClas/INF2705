@@ -45,26 +45,71 @@ uniform sampler2D laTextureNorm;
 
 in Attribs {
     vec4 couleur;
+	vec3 normale, obsvec;
+	vec3 lumiDir[3];
+	vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
 
 vec4 calculerReflexion( in int j, in vec3 L, in vec3 N, in vec3 O ) // pour la lumière j
 {
-    vec4 grisUniforme = vec4(0.7,0.7,0.7,1.0);
-    return( grisUniforme );
+	float NdotHV = max((utiliseBlinn) ? dot(normalize(L + O), N) : dot(reflect(-L, N), O), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+
+	vec4 ambient = LightSource.ambient[j] * FrontMaterial.ambient;
+	vec4 diffuse = LightSource.diffuse[j] * FrontMaterial.diffuse * NdotL;
+	
+	vec4 spec = vec4( 0.0 );
+	if ( NdotL > 0.0 )
+		spec = LightSource.specular[j] * FrontMaterial.specular * pow(NdotHV, FrontMaterial.shininess );
+
+    return ambient + diffuse + spec;
 }
 
 void main( void )
 {
-    // ...
+	vec3 N = normalize(AttribsIn.normale);
+	vec3 O = normalize(AttribsIn.obsvec);
 
-    // assigner la couleur finale
-    FragColor = 0.01*AttribsIn.couleur + vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
+	if( numTexNorm != 0 ) 
+	{
+        vec3  couleur = texture(laTextureNorm, AttribsIn.texCoord).rgb;
+        vec3 dN = normalize( ( couleur  - 0.5 ) * 2.0 );
+        N = normalize( N + dN );
+    }
 
-    int j = 0;
-    // vec4 coul = calculerReflexion( j, L, N, O );
-    // ...
+    if(typeIllumination == 1) // phong
+	{ 
+		vec4 coul =	FrontMaterial.ambient * LightModel.ambient + 
+					FrontMaterial.emission;
+        for(int i = 0 ; i < 3 ; i++) {         
+			vec3 L = normalize( AttribsIn.lumiDir[i] ); 
+            coul += calculerReflexion(i, L, N, O);
+        }
+        FragColor = coul;
+    }
+    else {
+		// gouraud
+        FragColor = AttribsIn.couleur;
+    }
 
-    //if ( afficheNormales ) FragColor = vec4(N,1.0);
+	if (numTexCoul != 0)
+	{
+		vec4 coulTexture = texture(laTextureCoul, AttribsIn.texCoord);
+		FragColor *= coulTexture;
+
+		if (afficheTexelFonce == 1) {
+			if(length(coulTexture.rgb) < 0.5) {
+                FragColor.a = 0.5;
+            }
+		}
+        else if(afficheTexelFonce == 2) {
+            if(length(coulTexture.rgb) < 0.5) {
+                FragColor.a = 0.0; // ou discard;
+            }
+		}
+	}
+
+    if ( afficheNormales ) FragColor = vec4( AttribsIn.normale,1.0);
 }

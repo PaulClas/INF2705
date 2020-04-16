@@ -1,0 +1,37 @@
+Q1: Dans l'exemple du cours qui affiche un miroir avec une scène composée
+    d'un cube et de deux cylindres, on doit utiliser un plan de coupe afin
+    de ne pas afficher en avant du miroir le cylindre qui est placé en
+    arrière du miroir. Pourquoi un tel plan de coupe n'est-il pas nécessaire
+    ici alors que les parois de l'aquarium sont toutes des miroirs ?
+Dans l'exemple du cours, il est possible de voir qu'afficherContenu crée toutes
+les formes en même temps; le cylndre bleu, le cylindre rouge et, si nécessaire,
+le cube. Tous sont situés dans le cube mais seuls le cylindre bleu et le cube
+sont en face du miroir. AfficherContenuRéflechi, sans plan de clipping, projeterait 
+ces trois formes car afficherContenu, qui y est appelé, ne permet pas de n'afficher
+qu'un des deux cylindres; seul le cube est optionnel. Il a donc fallu découper la scène
+pour que seules les formes du bon côté du miroir soient affichées dans le miroir.
+Pour notre TP, il n'y a pas eu de plan de coupe nécessaire car chaque scène était réfléchie
+dans son propre stencil et miroir. De plus, les miroirs étant situés sur les murs, 
+il n'y a pas d'objets "derrière" ceux-ci qui sont présents dans la scène.
+
+
+Q2: Dans le cadre de ce TP, les réflexions sur les parois sont uniques,
+    c'est-à-dire qu'on n'y voit qu'une seule réflexion : celle du contenu de
+    l'aquarium.  Toutefois, en présence de deux miroirs face à face, on
+    devrait s'attendre à des réflexions multiples, comme illustré dans la
+    figure 10 de l'énoncé. Expliquez succinctement ce qui devrait être fait
+    dans ce TP pour afficher un niveau supplémentaire de réflexion dans
+    chaque miroir, c'est-à-dire afficher la réflexion simple (un seul
+    niveau) d'une paroi dans l'autre qui lui fait face.
+    (On souhaite continuer à utiliser le tampon de stencil, sans s'embarquer
+    à faire du tracé de rayons.)
+    Au total, combien de fois devrait-on alors tracer la scène ?
+Comme les réflexions présentes sont uniques, nous n'avons que copié les poissons de
+la scène 4 fois à partir des poissons originaux, et les avons translatés et inversés
+afin qu'ils soient adéquatement affichés. Si nous voulions ajouter un 2e niveau de 
+réflexion à chacun des mirroirs, cela voudrait dire qu'il faudrait retracer une nouvelle
+copie des poissons derrière chacune des réflexions existantes, ce qui amènerait le compte
+total de traçages de poissons à 9. La seconde réflexion serait simplement une translation 
+de la scène originale, car la double inversion causée par le second niveau de miroirs 
+fait en sorte que l'orientation de la scène réfléchie est la même que l'originale. 
+
